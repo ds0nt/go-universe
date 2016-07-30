@@ -1,8 +1,10 @@
 package universe
 
 import (
-	"log"
+	"fmt"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 type Entity interface {
@@ -44,6 +46,7 @@ func (u *Universe) Start(update <-chan *UniverseTickParams) {
 				p := v.Position()
 				p.X += 1 * frame.Delta.Seconds()
 				v.SetPosition(p)
+				fmt.Print("˰")
 			}
 		}
 	}

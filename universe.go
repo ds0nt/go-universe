@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
+
 	"golang.org/x/net/websocket"
 
 	"github.com/ds0nt/go-universe/socket"
@@ -48,12 +50,15 @@ func main() {
 	u.Add(p1, p2, p3, p4)
 
 	// websocket interface
-	universeServer := socket.NewUniverseServer(u)
-	http.Handle("/connect", websocket.Handler(universeServer.Server))
-	err := http.ListenAndServe(":12345", nil)
-	if err != nil {
-		panic("ListenAndServe: " + err.Error())
-	}
+	go func() {
+		log.Println("Starting Server")
+		universeServer := socket.NewUniverseServer(u)
+		http.Handle("/connect", websocket.Handler(universeServer.Server))
+		err := http.ListenAndServe(":12345", nil)
+		if err != nil {
+			panic("ListenAndServe: " + err.Error())
+		}
+	}()
 
 	updateCh := make(chan *universe.UniverseTickParams)
 	go u.Start(updateCh)
